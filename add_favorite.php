@@ -14,7 +14,6 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-
 $user_id = $_SESSION["user_id"];
 $recipe_id = $_POST['recipe_id'] ?? '';
 
@@ -30,7 +29,8 @@ $stmt_check->execute();
 $result_check = $stmt_check->get_result();
 
 if ($result_check->num_rows > 0) {
-    die("This recipe is already in your favorites.");
+    echo "<script>alert('This recipe is already in your favorites.'); window.location.href='index.php';</script>";
+    exit();
 }
 
 
@@ -39,7 +39,11 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $user_id, $recipe_id);
 
 if ($stmt->execute()) {
-    header("Location: index.php");
+    echo "<script>alert('Recipe added to favorites!'); window.location.href='index.php';</script>";
 } else {
-    die("Error saving favorite: " . $stmt->error);
+    echo "<script>alert('Error saving favorite.'); window.location.href='index.php';</script>";
 }
+
+$stmt->close();
+$conn->close();
+?>
