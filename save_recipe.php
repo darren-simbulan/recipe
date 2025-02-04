@@ -14,19 +14,16 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-
-$user_id = $_SESSION["user_id"]; 
+$user_id = $_SESSION["user_id"];
 $title = $_POST['title'] ?? '';
 $ingredients = $_POST['ingredients'] ?? '';
 $instructions = $_POST['instructions'] ?? '';
 $category = $_POST['category'] ?? '';
 
-
-$targetDir = "uploads/"; 
+$targetDir = "uploads/";
 if (!is_dir($targetDir)) {
-    mkdir($targetDir, 0777, true)
+    mkdir($targetDir, 0777, true); 
 }
-
 
 $image = null;
 if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -34,12 +31,11 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
     $targetFilePath = $targetDir . $fileName;
 
     if (move_uploaded_file($_FILES["image"]["tmp_name"], $targetFilePath)) {
-        $image = $targetFilePath; 
+        $image = $targetFilePath;
     } else {
         die("Error: Image upload failed. Check folder permissions.");
     }
 }
-
 
 $sql = "INSERT INTO recipes (user_id, title, image, ingredients, instructions, category) 
         VALUES (?, ?, ?, ?, ?, ?)";

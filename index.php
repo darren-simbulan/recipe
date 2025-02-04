@@ -103,7 +103,7 @@ $result = $conn->query($sql);
             background-color: #45a049;
         }
         .btn-logout {
-            background-color: #f44336;
+            background-color: #333;
             color: white;
             padding: 10px 20px;
             border: none;
