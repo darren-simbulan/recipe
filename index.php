@@ -33,46 +33,62 @@ $result = $conn->query($sql);
             color: #333;
         }
         .header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px 0;
-            text-align: center;
-        }
+    background-color: #28a745;
+    color: white;
+    padding: 20px; 
+    text-align: center;
+    font-size: 24px;
+}
+
         .nav {
-            background-color: #333;
+            background-color: #343a40;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
         }
         .nav a {
-            float: left;
-            display: block;
             color: white;
-            text-align: center;
-            padding: 14px 20px;
             text-decoration: none;
+            padding: 14px 20px;
+            transition: 0.3s;
         }
         .nav a:hover {
-            background-color: #ddd;
-            color: black;
+            background-color: #495057;
+            border-radius: 5px;
+        }
+        .btn-logout {
+            background-color: #dc3545;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn-logout:hover {
+            background-color: #c82333;
         }
         .container {
             max-width: 1200px;
-            margin: 20px auto;
+            margin: 30px auto;
             padding: 20px;
             text-align: center;
         }
         .recipe-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
+            justify-content: center;
         }
         .recipe-card {
             background: white;
-            width: 300px;
             border-radius: 10px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            text-align: left;
+            text-align: center;
+            transition: 0.3s;
+            padding-bottom: 15px;
+        }
+        .recipe-card:hover {
+            transform: scale(1.05);
         }
         .recipe-card img {
             width: 100%;
@@ -90,38 +106,54 @@ $result = $conn->query($sql);
             font-size: 14px;
             color: #666;
         }
-        .recipe-card a {
+        .recipe-card a, .recipe-card button {
             display: inline-block;
             margin-top: 10px;
-            text-decoration: none;
-            background-color: #4CAF50;
-            color: white;
             padding: 8px 12px;
             border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .recipe-card a {
+            background-color: #28a745;
+            color: white;
         }
         .recipe-card a:hover {
-            background-color: #45a049;
+            background-color: #218838;
         }
-        .btn-logout {
-            background-color: #333;
+        .recipe-card .favorite-button {
+            background-color: #007bff;
             color: white;
-            padding: 10px 20px;
             border: none;
-            font-size: 16px;
             cursor: pointer;
-            text-decoration: none;
-            border-radius: 5px;
-            float: right;
         }
-        .btn-logout:hover {
-            background-color: #d32f2f;
+        .recipe-card .favorite-button:hover {
+            background-color: #0056b3;
+        }
+        .recipe-card .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .recipe-card .delete-button:hover {
+            background-color: #c82333;
         }
     </style>
+    <script>
+        function confirmDelete(recipeId) {
+            if (confirm("Are you sure you want to delete this recipe?")) {
+                window.location.href = "delete_recipe.php?id=" + recipeId;
+            }
+        }
+    </script>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Recipe Management System</h1>
+<div class="header">
+        Recipe Management System
     </div>
 
     <div class="nav">
@@ -148,23 +180,28 @@ $result = $conn->query($sql);
         </form>
 
         <div class="recipe-container">
-    <?php while ($row = $result->fetch_assoc()): ?>
-        <div class="recipe-card">
-            <img src="<?= htmlspecialchars($row['image']) ?>" alt="<?= htmlspecialchars($row['title']) ?>" width="200">
-            <h2><?= htmlspecialchars($row['title']) ?></h2>
-            <p><strong>Submitted by:</strong> <?= htmlspecialchars($row['username']) ?></p>
-            <p>Category: <?= htmlspecialchars($row['category']) ?></p>
-            <a href="recipe.php?id=<?= $row['id'] ?>">View Recipe</a>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <div class="recipe-card">
+                    <img src="<?= htmlspecialchars($row['image']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
+                    <div class="details">
+                        <h2><?= htmlspecialchars($row['title']) ?></h2>
+                        <p><strong>Submitted by:</strong> <?= htmlspecialchars($row['username']) ?></p>
+                        <p>Category: <?= htmlspecialchars($row['category']) ?></p>
+                        <a href="recipe.php?id=<?= $row['id'] ?>">View Recipe</a>
 
-           
-            <form action="add_favorite.php" method="POST">
-                <input type="hidden" name="recipe_id" value="<?= $row['id'] ?>">
-                <button type="submit">❤️ Add to Favorites</button>
-            </form>
+                        <form action="add_favorite.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="recipe_id" value="<?= $row['id'] ?>">
+                            <button type="submit" class="favorite-button">❤️ Add to Favorites</button>
+                        </form>
+
+                        <?php if ($_SESSION['user_id'] == $row['user_id']): ?>
+                            <button onclick="confirmDelete(<?= $row['id'] ?>)" class="delete-button">🗑️ Delete</button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endwhile; ?>
         </div>
-    <?php endwhile; ?>
-</div>
-
+    </div>
 
 </body>
 </html>

@@ -15,7 +15,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-
 $sql_recipes = "SELECT * FROM recipes ORDER BY created_at DESC";
 $result_recipes = $conn->query($sql_recipes);
 
@@ -52,24 +51,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment'])) {
         .header {
             background-color: #4CAF50;
             color: white;
-            padding: 15px 0;
+            padding: 24px ;
             text-align: center;
         }
         .nav {
-            background-color: #333;
+            background-color: #343a40;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
         }
         .nav a {
-            float: left;
-            display: block;
             color: white;
-            text-align: center;
-            padding: 14px 20px;
             text-decoration: none;
+            padding: 14px 20px;
+            transition: 0.3s;
         }
         .nav a:hover {
-            background-color: #ddd;
-            color: black;
+            background-color: #495057;
+            border-radius: 5px;
+        }
+        .btn-logout {
+            background-color: #dc3545;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn-logout:hover {
+            background-color: #c82333;
         }
         .container {
             max-width: 1200px;
@@ -78,21 +87,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment'])) {
             text-align: center;
         }
         .recipe-card {
-    background: white;
-    width: 800px;
-    margin: 20px auto;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-align: left;
-    padding-bottom: 20px;
-}
-.recipe-card img {
-    width: 100%; 
-    height: 300px; 
-    object-fit: cover; 
-}
-
+            background: white;
+            width: 800px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: left;
+            padding-bottom: 20px;
+        }
+        .recipe-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
         .recipe-card .details {
             padding: 15px;
         }
@@ -156,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment'])) {
 <body>
 
     <div class="header">
-        <h1>Recipe Management System</h1>
+        Recipe Management System
     </div>
 
     <div class="nav">
@@ -171,22 +179,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment'])) {
     <div class="container">
         <h2>🍽️ All Recipes</h2>
 
-        
         <?php while ($recipe = $result_recipes->fetch_assoc()): ?>
             <div class="recipe-card">
                 <img src="<?= htmlspecialchars($recipe['image']) ?>" alt="<?= htmlspecialchars($recipe['title']) ?>">
                 <div class="details">
                     <h2><?= htmlspecialchars($recipe['title']) ?></h2>
                     <p>Category: <?= htmlspecialchars($recipe['category']) ?></p>
-                    <a href="recipe.php?id=<?= $recipe['id'] ?>">View Recipe</a>
+                
                 </div>
 
-              
                 <div class="comments-section">
                     <h3>💬 Comments</h3>
 
                     <?php
-                 
                     $sql_comments = "SELECT comments.*, users.username FROM comments 
                                      JOIN users ON comments.user_id = users.id
                                      WHERE comments.recipe_id = ? 
@@ -212,7 +217,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment'])) {
                     <?php endwhile; ?>
                     <?php $stmt_comments->close(); ?>
 
-                  
                     <form method="POST" class="comment-form">
                         <textarea name="comment" placeholder="Add a comment..." required></textarea><br>
                         <input type="hidden" name="recipe_id" value="<?= $recipe['id'] ?>">

@@ -17,30 +17,41 @@ session_start();
             color: #333;
         }
         .header {
-            background-color: #4CAF50;
+            background-color: #28a745;
             color: white;
-            padding: 15px 0;
+            padding: 24px;
             text-align: center;
+            font-size: 24px;
         }
         .nav {
-            background-color: #333;
-            overflow: hidden;
+            background-color: #343a40;
+            overflow: hidden;   
+            display: flex;
+            justify-content: center;
             padding: 10px 0;
-            text-align: center;
         }
         .nav a {
-            display: inline-block;
             color: white;
-            padding: 10px 20px;
             text-decoration: none;
+            padding: 14px 20px;
+            transition: 0.3s;
         }
         .nav a:hover {
-            background-color: #ddd;
-            color: black;
+            background-color: #495057;
+            border-radius: 5px;
+        }
+        .btn-logout {
+            background-color: #dc3545;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn-logout:hover {
+            background-color: #c82333;
         }
         .container {
             max-width: 800px;
-            margin: 20px auto;
+            margin: 30px auto;
             padding: 20px;
             background-color: white;
             border-radius: 10px;
@@ -50,8 +61,9 @@ session_start();
     </style>
 </head>
 <body>
+
     <div class="header">
-        <h1>About Us</h1>
+    About Us
     </div>
     
     <div class="nav">
@@ -69,5 +81,6 @@ session_start();
         <p>Our mission is to create a space where anyone, from home cooks to professional chefs, can share their recipes and find inspiration from others.</p>
         <p>Join our community and start sharing your favorite dishes today!</p>
     </div>
+
 </body>
 </html>

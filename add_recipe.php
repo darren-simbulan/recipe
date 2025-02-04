@@ -16,33 +16,15 @@ if ($conn->connect_error) {
 }
 
 $user_id = $_SESSION["user_id"];
-$search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$sort = isset($_GET['sort']) ? $_GET['sort'] : 'title';
-$order = isset($_GET['order']) && $_GET['order'] === 'DESC' ? 'DESC' : 'ASC';
-
-$allowed_sort_columns = ['title', 'category', 'date_added'];
-if (!in_array($sort, $allowed_sort_columns)) {
-    $sort = 'title';
-}
-
-$sql = "SELECT recipes.* FROM favorites 
-        JOIN recipes ON favorites.recipe_id = recipes.id 
-        WHERE favorites.user_id = ? AND recipes.title LIKE ? 
-        ORDER BY $sort $order";
-
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("is", $user_id, $search);
-$stmt->execute();
-$result = $stmt->get_result();
-
 $message = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_recipe'])) {
     $title = $_POST['title'];
     $category = $_POST['category'];
     $ingredients = $_POST['ingredients'];
     $instructions = $_POST['instructions'];
     $date_added = date('Y-m-d H:i:s');
-    
+
     $image = "";
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
         $image_path = 'uploads/' . basename($_FILES['image']['name']);
@@ -50,9 +32,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_recipe'])) {
         $image = $image_path;
     }
 
-    $insert_sql = "INSERT INTO recipes (title, category, ingredients, instructions, image, user_id, date_added) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $insert_sql = "INSERT INTO recipes (title, category, ingredients, instructions, image, user_id, date_added) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?)";
     $insert_stmt = $conn->prepare($insert_sql);
     $insert_stmt->bind_param("sssssis", $title, $category, $ingredients, $instructions, $image, $user_id, $date_added);
+    
     if ($insert_stmt->execute()) {
         $message = "Recipe added successfully!";
     } else {
@@ -66,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_recipe'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favorite Recipes</title>
+    <title>Add Recipe</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -99,60 +83,123 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_recipe'])) {
             border-radius: 5px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 600px;
             margin: 30px auto;
             padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .search-bar, .sort-bar, .add-recipe {
-            margin-bottom: 20px;
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
         }
-        .search-bar input, .sort-bar select, .add-recipe input, .add-recipe textarea {
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-        .search-bar button, .sort-bar button, .add-recipe button {
-            padding: 10px;
+        textarea {
+            height: 100px;
+            resize: none;
+        }
+        button {
+            padding: 10px 15px;
             background-color: #28a745;
             color: white;
             border: none;
+            font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
         }
-        .recipe-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            justify-content: center;
+        button:hover {
+            background-color: #218838;
         }
+        .message {
+            color: green;
+            margin-bottom: 10px;
+        }
+        .btn-logout {
+    background-color: #dc3545; 
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: #c82333;
+}
+
     </style>
 </head>
 <body>
+
     <div class="header">Recipe Management System</div>
+    
     <div class="nav">
         <a href="welcome.php">Home</a>
         <a href="index.php">View Recipes</a>
         <a href="add_recipe.php">Add Recipe</a>
         <a href="favorites.php">Favorite Recipes</a>
-        <a href="logout.php">Logout</a>
+        <a href="about.php">About Us</a>
+       
+        <a href="logout.php" class="btn-logout">Logout</a>
     </div>
+
     <div class="container">
-        <h2>Favorite Recipes</h2>
-        <p><?= $message ?></p>
-        <form class="add-recipe" method="POST" enctype="multipart/form-data">
-            <input type="text" name="title" placeholder="Recipe Title" required>
-            <input type="text" name="category" placeholder="Category" required>
-            <textarea name="ingredients" placeholder="Ingredients" required></textarea>
-            <textarea name="instructions" placeholder="Instructions" required></textarea>
-            <input type="file" name="image" accept="image/*">
+        <h2>Add New Recipe</h2>
+        <?php if ($message): ?>
+            <p class="message"><?= $message ?></p>
+        <?php endif; ?>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Recipe Title</label>
+                <input type="text" id="title" name="title" placeholder="Enter recipe title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="Dessert">Dessert</option>
+                    <option value="Ulam">Ulam</option>
+                    <option value="Snacks">Snacks</option>
+                    <option value="Drinks">Drinks</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ingredients">Ingredients</label>
+                <textarea id="ingredients" name="ingredients" placeholder="List ingredients" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="instructions">Instructions</label>
+                <textarea id="instructions" name="instructions" placeholder="Write cooking instructions" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Recipe Image</label>
+                <input type="file" id="image" name="image" accept="image/*">
+            </div>
+
             <button type="submit" name="add_recipe">Add Recipe</button>
         </form>
     </div>
+
 </body>
 </html>
 
 <?php
-$stmt->close();
 $conn->close();
 ?>

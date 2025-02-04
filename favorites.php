@@ -129,6 +129,18 @@ $result = $stmt->get_result();
         .recipe-card button:hover {
             background-color: #c82333;
         }
+        .btn-logout {
+    background-color: #dc3545; 
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: #c82333;
+}
     </style>
 </head>
 <body>
@@ -142,7 +154,7 @@ $result = $stmt->get_result();
         <a href="add_recipe.php">Add Recipe</a>
         <a href="favorites.php">Favorite Recipes</a>
         <a href="about.php">About Us</a>
-        <a href="logout.php">Logout</a>
+        <a href="logout.php" class="btn-logout">Logout</a>
     </div>
 
     <div class="container">
