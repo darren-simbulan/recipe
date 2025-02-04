@@ -144,6 +144,7 @@ $recipe_of_the_day = $result_random->fetch_assoc();
         <a href="index.php">View Recipes</a>
         <a href="add_recipe.php">Add Recipe</a>
         <a href="favorites.php">Favorite Recipes</a>
+        <a href="about.php">About Us</a>
         <a href="logout.php" class="btn-logout">Logout</a>
     </div>
 
