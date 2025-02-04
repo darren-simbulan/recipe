@@ -141,6 +141,7 @@ $result = $stmt->get_result();
         <a href="index.php">View Recipes</a>
         <a href="add_recipe.php">Add Recipe</a>
         <a href="favorites.php">Favorite Recipes</a>
+        <a href="about.php">About Us</a>
         <a href="logout.php">Logout</a>
     </div>
 
