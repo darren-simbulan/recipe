@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment'])) {
     $stmt->execute();
     $stmt->close();
 
-    header("Location: welcome.php");
+    header("Location: index.html");
     exit();
 }
 ?>
